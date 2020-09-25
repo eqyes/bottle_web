@@ -39,9 +39,12 @@ def upload():
 # if no this param, when same file exists, return “IOError: File exists.” error
 @route('/upload', method = 'POST')
 def do_upload():
-    upload   = request.files.get('data')
-    upload.save(save_path,overwrite=True)  # file save to save_path path
-    return 'ok'
+    upload = request.files.get('data')
+    import os.path
+    name, ext = os.path.splitext(upload.filename)  # use os.path.splitext separate file name and suffix 
+    upload.filename = ''.join(('123',ext))        # change filename
+    upload.save(save_path,overwrite=True)  # file save to save_path 
+    return u'upload success filename ：%s  suffix：%s \n changed file name：%s' %(name,ext,''.join(('123',ext)))
 
 # force file download
 @route('/download/<filename:path>')
