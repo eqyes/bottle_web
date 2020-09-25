@@ -1,6 +1,7 @@
 #main.py
 
-from bottle import run,route,template,request,response
+from bottle import run,route,request,response
+from bottle import template,view
 from user import read_user
 from user import write_user
 from user import password_crypt
@@ -43,11 +44,13 @@ def register_post():
     return 'register faild'
 
 @route('/info')
+@view('info')     #use view load info template, no need write template suffix
 def info():
     name = 'isokdo'
     age = '30'
     blog = 'www.isokdo.com'
     qq = '254758987'
-    return template('info',tname = name,tage = age,tblog = blog, tqq = qq)
+    data = {'tname':name,'tage':age,'tblog':blog, 'tqq': qq}    #use view, can return dirt type
+    return data
 
 run(host='0.0.0.0', port=8090, debug=True, reloader=True)
