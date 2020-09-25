@@ -10,8 +10,28 @@ from user import password_crypt
 
 # define image path
 images_path = './images'
+assets_path = './assets'
 
-@route('/images/<filename:re:.*\.gif>')
+# define download path
+download_path = './download'
+
+# force file download
+@route('/download/<filename:path>')
+def download(filename):
+    return static_file(filename, root=download_path, download=filename)
+
+
+@route('/assets/<filename:re:.*\.css|.*\.js|.*\.png|.*\.jpg|.*\.gif>')
+def server_static(filename):
+    """define /assets/ static(css,js,image) resource path"""
+    return static_file(filename, root=assets_path)
+
+@route('/assets/<filename:re:.*\.ttf|.*\.otf|.*\.eot|.*\.woff|.*\.svg|.*\.map>')
+def server_static(filename):
+    """define /assets/ font resource path"""
+    return static_file(filename, root=assets_path)
+
+@route('/images/<filename:re:.*\.png>')
 def server_static(filename):
     return static_file(filename, root=images_path)
 
