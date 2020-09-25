@@ -42,4 +42,12 @@ def register_post():
 
     return 'register faild'
 
+@route('/info')
+def info():
+    name = 'isokdo'
+    age = '30'
+    blog = 'www.isokdo.com'
+    qq = '254758987'
+    return template('info',tname = name,tage = age,tblog = blog, tqq = qq)
+
 run(host='0.0.0.0', port=8090, debug=True, reloader=True)
