@@ -1,10 +1,19 @@
-#main.py
 
+#/usr/bin/env python
+#coding=utf-8
 from bottle import run,route,request,response
-from bottle import template,view
+from bottle import template,view,static_file
 from user import read_user
 from user import write_user
 from user import password_crypt
+
+
+# define image path
+images_path = './images'
+
+@route('/images/<filename:re:.*\.gif>')
+def server_static(filename):
+    return static_file(filename, root=images_path)
 
 @route('/')
 def index():
