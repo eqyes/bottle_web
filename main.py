@@ -52,7 +52,7 @@ def info():
     qq = '254758987'
     book = ['python','linux','php']
     price = {'pc':4000,'phone':2000,'bike':600}
-    data = {'tname':name,'tage':age,'tblog':blog, 'tqq': qq,'tbook':book,'tprice':price}
+    data = {'tname':name,'tage':age,'tblog':blog, 'tqq': qq,'tbook':book,'tprice':price,'tnum':''}
     return data
 
 run(host='0.0.0.0', port=8090, debug=True, reloader=True)
