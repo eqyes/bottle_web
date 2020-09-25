@@ -6,6 +6,10 @@ from user import read_user
 from user import write_user
 from user import password_crypt
 
+@route('/')
+def index():
+    return template('index')
+
 @route('/login', method = 'GET')
 def login_get():
     username = request.get_cookie('username', secret = 'usafe')

@@ -1,15 +1,6 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Index Page</title>
-  </head>
-  <body>
-  <h1>index page</h1>
-  </body>
-  %if username == None or username == '':
-    <h2>welcome</h2>
-  %else:
-    <h2>welcome {{username}}</h2>
-  %end
-</html>
+%rebase base title='python bottle 模板继承'
+
+<p>
+哈喽，我是首页，我这的代码很简单，就这么几行，但你要是在浏览器中打开源代码看看，</br>
+可就不止这几行了，而且包括了base.tpl和menu.tpl的所有代码，打开看看？
+</p>
