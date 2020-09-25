@@ -1,11 +1,18 @@
-# main.py
+#main.py （文件名）
 
-from bottle import run,route,template
+from bottle import run,route,template,request
 
-@route("/<name>")
+@route("/login", method = 'get')
 
-def index(name):
+def index():
+    return template('login')
 
-    return template('index',username = name)
+@route('/login', method = 'post')
+def index():
+    username = request.forms.get('username')
+    password = request.forms.get('password')
+    if username == 'admin' and password == 'root' :
+        return f'wellcom {username}'
+    return 'user or password error'
 
 run(host='0.0.0.0', port=8090, debug=True, reloader=True)
