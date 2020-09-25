@@ -15,6 +15,34 @@ assets_path = './assets'
 # define download path
 download_path = './download'
 
+# define upload path
+save_path = './upload'
+
+
+# file upload html template, write here direct for easy
+@route('/upload')
+def upload():
+    return '''
+        <html>
+            <head>
+            </head>
+            <body>
+                <form action"/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="data" />
+                    <input type="submit" value="Upload" />
+                </form>
+            </body>
+        </html>
+    '''
+
+# file upload, overwrite=True override all orign file
+# if no this param, when same file exists, return “IOError: File exists.” error
+@route('/upload', method = 'POST')
+def do_upload():
+    upload   = request.files.get('data')
+    upload.save(save_path,overwrite=True)  # file save to save_path path
+    return 'ok'
+
 # force file download
 @route('/download/<filename:path>')
 def download(filename):
