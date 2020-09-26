@@ -23,7 +23,7 @@ save_path = './upload'
 # set session param
 session_opts = {
     'session.type':'file',                   # 以文件的方式保存session
-    'session.cookei_expires':3600,       # session过期时间为3600秒
+    'session.cookei_expires':6,       # session过期时间为3600秒
     'session.data_dir':'/tmp/sessions',  # session存放路径
     'sessioni.auto':True
     }
@@ -120,8 +120,12 @@ def info():
 
 @route('/logout')
 def logout_get():
-    password = ' '
+    username = 'y'
+    password = 'y'
     response.set_cookie('password', password, secret = 'psafe', httponly = True, max_age = 600)
+    s = request.environ.get('beaker.session') # get session
+    del[s['user']]
+    s.save()
 
     return redirect('/login')
 
@@ -169,12 +173,13 @@ def login_post():
 
     return redirect('/login')
 
+
 @route('/')
 def index():
     # for k,v in request.environ.items():
     #     print(k,v)
     s = request.environ.get('beaker.session') # get session
-    username = s.get('user',None)   # get key as user value from session，which login to save
+    username = s.get('user', None)   # get key as user value from session，which login to save
     if not username:
         return redirect('/login')
 
