@@ -118,6 +118,13 @@ def info():
     data = {'tname':name,'tage':age,'tblog':blog, 'tqq': qq,'tbook':book,'tprice':price,'tnum':''}
     return data
 
+@route('/logout')
+def logout_get():
+    password = ' '
+    response.set_cookie('password', password, secret = 'psafe', httponly = True, max_age = 600)
+
+    return redirect('/login')
+
 #@route('/login', method = 'GET')
 @route('/login')
 def login_get():
