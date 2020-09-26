@@ -8,10 +8,9 @@
   <body>
   <h1>Login Page</h1>
   <form method = 'post' action = './login'>
-  Username:<input type = 'text' name = 'username'>
-  <br />
-  Password:<input type = 'password' name = 'password'>
-  <button>提交</button>
+  Username:<input name='username' type='text' >
+  Password:<input name='password' type='password'>
+  <input value="Login" type="submit" />
   </form>
   </body>
 </html>

@@ -3,10 +3,11 @@
 #coding=utf-8
 from bottle import run,route,request,response
 from bottle import template,view,static_file
+from bottle import error,abort,redirect,default_app
+from beaker.middleware import SessionMiddleware
 from user import read_user
 from user import write_user
 from user import password_crypt
-
 
 # define image path
 images_path = './images'
@@ -18,6 +19,29 @@ download_path = './download'
 # define upload path
 save_path = './upload'
 
+
+# set session param
+session_opts = {
+    'session.type':'file',                   # 以文件的方式保存session
+    'session.cookei_expires':3600,       # session过期时间为3600秒
+    'session.data_dir':'/tmp/sessions',  # session存放路径
+    'sessioni.auto':True
+    }
+
+@error(404)
+def miss(code):
+    # error page, generally can point to a 404 html page, then return, template('404') to access 404
+    return '没找到页面！'
+
+@route('/error')
+def nofound():
+    # cause 404 error
+    abort(404)
+
+@route('/page')
+def page():
+    # access /page, jump to main
+    redirect('/')
 
 # file upload html template, write here direct for easy
 @route('/upload')
@@ -68,33 +92,6 @@ def server_static(filename):
 def server_static(filename):
     return static_file(filename, root=images_path)
 
-@route('/')
-def index():
-    return template('index')
-
-@route('/login', method = 'GET')
-def login_get():
-    username = request.get_cookie('username', secret = 'usafe')
-    password = request.get_cookie('password', secret = 'psafe')
-
-    if read_user(username, password):
-        return 'you already logout'
-
-    return template('login')
-
-@route('/login', method = 'POST')
-def login_post():
-    username = request.forms.get('username')
-    password = request.forms.get('password')
-    password = password_crypt(password)
-
-    if read_user(username, password):
-        response.set_cookie('username', username, secret = 'usafe', httponly = True, max_age = 600)
-        response.set_cookie('password', password, secret = 'psafe', httponly = True, max_age = 600)
-        return 'login success'
-
-    return 'user or password wrong'
-
 @route('/register', method = 'GET')
 def register_get():
     return template('register')
@@ -121,4 +118,62 @@ def info():
     data = {'tname':name,'tage':age,'tblog':blog, 'tqq': qq,'tbook':book,'tprice':price,'tnum':''}
     return data
 
-run(host='0.0.0.0', port=8090, debug=True, reloader=True)
+#@route('/login', method = 'GET')
+@route('/login')
+def login_get():
+    username = request.get_cookie('username', secret = 'usafe')
+    password = request.get_cookie('password', secret = 'psafe')
+
+    if read_user(username, password):
+        return 'you already login'
+
+    return template('login')
+
+#@route('/login')
+#def login():
+#    return '''
+#        <html>
+#        <head>
+#        </head>
+#        <body>
+#        <form action="/login" method="post">
+#            Username: <input name="username" type="text" />
+#            Password: <input name="password" type="password" />
+#            <input value="Login" type="submit" />
+#        </form>
+#        </body>
+#        </html>
+#    '''
+
+@route('/login', method = 'POST')
+def login_post():
+    username = request.forms.get('username')
+    password = request.forms.get('password')
+    password = password_crypt(password)
+
+    if read_user(username, password):
+        response.set_cookie('username', username, secret = 'usafe', httponly = True, max_age = 600)
+        response.set_cookie('password', password, secret = 'psafe', httponly = True, max_age = 600)
+        # correct get env beaker.session save to s, then we use dirt way save  data in s ,etc. username, id, authority
+        s = request.environ.get('beaker.session')
+        s['user'] = username
+        s.save()
+        return redirect('/')
+
+    return redirect('/login')
+
+@route('/')
+def index():
+    # for k,v in request.environ.items():
+    #     print(k,v)
+    s = request.environ.get('beaker.session') # get session
+    username = s.get('user',None)   # get key as user value from session，which login to save
+    if not username:
+        return redirect('/login')
+
+    return template('index')
+
+
+app = default_app()
+app = SessionMiddleware(app, session_opts)
+run(app=app,host='0.0.0.0', port=8090,debug=True)
